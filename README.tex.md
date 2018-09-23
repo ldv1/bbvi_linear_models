@@ -10,8 +10,6 @@ I adapted his code to linear models.
 You will need python 3 with [autograd](https://github.com/HIPS/autograd), [matplotlib](https://matplotlib.org/), and [scipy](https://www.scipy.org/).
 
 ## Demo
-<img src="https://media.giphy.com/media/wsWQoNTnap2RYwtVTP/giphy.gif" width="800" height="400" />
-
 ![Demo in 2D](https://github.com/ldv1/bbvi_linear_models/blob/master/demo.gif)
 
 ## See also

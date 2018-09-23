@@ -11,7 +11,8 @@ You will need python 3 with [autograd](https://github.com/HIPS/autograd), [matpl
 
 ## Demo
 <img src="https://media.giphy.com/media/wsWQoNTnap2RYwtVTP/giphy.gif" width="800" height="400" />
-![alt text](https://github.com/ldv1/bbvi_linear_models/blob/master/demo.gif "Demo with M=1")
+
+![Demo in 2D](https://github.com/ldv1/bbvi_linear_models/blob/master/demo.gif)
 
 ## See also
 * [Vprop: Variational Inference using RMSprop](http://bayesiandeeplearning.org/2017/papers/50.pdf) by Khan et al.:

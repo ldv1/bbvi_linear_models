@@ -9,6 +9,9 @@ I adapted his code to linear models.
 ## Dependencies
 You will need python 3 with [autograd](https://github.com/HIPS/autograd), [matplotlib](https://matplotlib.org/), and [scipy](https://www.scipy.org/).
 
+## Demo
+<img src="https://media.giphy.com/media/wsWQoNTnap2RYwtVTP/giphy.gif" width="40" height="40" />
+
 ## See also
 * [Vprop: Variational Inference using RMSprop](http://bayesiandeeplearning.org/2017/papers/50.pdf) by Khan et al.:
 As in this paper, I deliberately chose a prior of the form <img src="/tex/b1b094e0f0d44c4c89e75a07526b2776.svg?invert_in_darkmode&sanitize=true" align=middle width=140.00208089999998pt height=24.65753399999998pt/> so that results can be compared to those obtained using the algorithm Vprop.

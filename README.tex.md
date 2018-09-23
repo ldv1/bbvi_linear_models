@@ -15,7 +15,7 @@ You will need python 3 with [autograd](https://github.com/HIPS/autograd), [matpl
 ## See also
 * [Vprop: Variational Inference using RMSprop](http://bayesiandeeplearning.org/2017/papers/50.pdf) by Khan et al.:
 As in this paper, I deliberately chose a prior of the form $p(\boldsymbol{\theta})=\mathcal{N}(\boldsymbol{\theta}| \boldsymbol{0}, \boldsymbol{I}/\lambda)$ so that results can be compared to those obtained using the algorithm Vprop.
-* [Automatic Variational Inference in Stan](http://www.stat.columbia.edu/~gelman/research/unpublished/bbvb.pdf) by Kucukelbir:
+* [Automatic Variational Inference in Stan](http://www.stat.columbia.edu/~gelman/research/unpublished/bbvb.pdf) by Kucukelbir et al.:
 They automated black-box variational inference. What is great is that you can constraint the support of a random variable.  
 
 ## Authors

@@ -10,7 +10,7 @@ I adapted his code to linear models.
 You will need python 3 with [autograd](https://github.com/HIPS/autograd), [matplotlib](https://matplotlib.org/), and [scipy](https://www.scipy.org/).
 
 ## Demo
-<img src="https://media.giphy.com/media/wsWQoNTnap2RYwtVTP/giphy.gif" width="40" height="40" />
+<img src="https://media.giphy.com/media/wsWQoNTnap2RYwtVTP/giphy.gif" width="400" height="200" />
 
 ## See also
 * [Vprop: Variational Inference using RMSprop](http://bayesiandeeplearning.org/2017/papers/50.pdf) by Khan et al.:

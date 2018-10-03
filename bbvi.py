@@ -64,14 +64,19 @@ if __name__ == '__main__':
     ytrain = f( [a,b], Xtrain) + np.sqrt(s2)*np.random.randn(Xtrain.shape[0])
     # exact log evidence
     # brute force:
-    # loge = multivariate_normal.logpdf(ytrain.ravel(), cov=s2*np.eye(N)+1./l*np.matmul(Xtrain,Xtrain.T))
+    # loge = multivariate_normal.logpdf(ytrain.ravel(), \
+    #                                   cov=s2*np.eye(N)+1./l*np.matmul(Xtrain,Xtrain.T))
     # but for large datasets, we use the Woodbury formula
     S = l*s2*np.eye(D)+np.matmul(Xtrain.T,Xtrain)
     L = np.linalg.cholesky(S)
     C = np.linalg.solve(L,Xtrain.T)
     inv_cov = 1./s2*(np.eye(N) - np.matmul(C.T,C))    
-    logdet_cov = -D*np.log(l)+(N-D)*np.log(s2)+2.*np.sum(np.log(np.diag(L)))
-    loge = -N/2.*np.log(2.*np.pi)-0.5*logdet_cov-0.5*np.dot(ytrain,np.matmul(inv_cov,ytrain))
+    logdet_cov = -D*np.log(l) \
+                 +(N-D)*np.log(s2) \
+                 +2.*np.sum(np.log(np.diag(L)))
+    loge = -N/2.*np.log(2.*np.pi) \
+           -0.5*logdet_cov \
+           -0.5*np.dot(ytrain,np.matmul(inv_cov,ytrain))
     print("log evidence = {}".format(loge))
     # Joint probabilities.
     def logprob(w, s2, l, X, y, batch_size, t):
@@ -95,7 +100,9 @@ if __name__ == '__main__':
 
     # Build variational objective.
     objective, gradient, unpack_params = \
-        black_box_variational_inference(logprob, D, s2, l, Xtrain, ytrain, num_samples=1, batch_size=20)
+        black_box_variational_inference(logprob, D, s2, l, \
+                                        Xtrain, ytrain, \
+                                        num_samples=1, batch_size=20)
     
     # Set up figure.
     fig = plt.figure(figsize=(16,8), facecolor='white')
@@ -120,7 +127,9 @@ if __name__ == '__main__':
         density_ax.cla()
         density_ax.scatter( mean[0], mean[1], s = 50, marker = "+", color = "red")
         density_ax.scatter( a, b, s = 50, marker = "o", color = "black")
-        e = Ellipse(xy=[mean[0], mean[1]], width=2*np.exp(log_std[0]), height=2*np.exp(log_std[1]), angle=0.)
+        e = Ellipse(xy=[mean[0], mean[1]], \
+                    width=2*np.exp(log_std[0]), \
+                    height=2*np.exp(log_std[1]), angle=0.)
         density_ax.add_artist(e)
         e.set_alpha(0.3)
         e.set_facecolor("red")
@@ -150,5 +159,9 @@ if __name__ == '__main__':
     init_mean    = -1 * np.ones(D)
     init_log_std =  1 * np.ones(D)
     init_var_params = np.concatenate([init_mean, init_log_std])
-    variational_params = adam(gradient, init_var_params, step_size=0.1, num_iters=300, callback=callback)
+    variational_params = adam(gradient, \
+                              init_var_params, \
+                              step_size=0.1, \
+                              num_iters=300, \
+                              callback=callback)
     

@@ -51,7 +51,7 @@ if __name__ == '__main__':
     D = 2
     assert D > 1
     # Number of observations.
-    N = 200
+    N = 5000
     # True slope and intercept.
     a = -1
     b = 0.3
@@ -63,9 +63,16 @@ if __name__ == '__main__':
     Xtrain = np.c_[ np.ones(N), np.random.uniform(low=-1.0, high=1.0, size=(N,D-1)) ]
     ytrain = f( [a,b], Xtrain) + np.sqrt(s2)*np.random.randn(Xtrain.shape[0])
     # exact log evidence
-    loge = multivariate_normal.logpdf(ytrain.ravel(), cov=s2*np.eye(N)+1./l*np.matmul(Xtrain,Xtrain.T))
+    # brute force:
+    # loge = multivariate_normal.logpdf(ytrain.ravel(), cov=s2*np.eye(N)+1./l*np.matmul(Xtrain,Xtrain.T))
+    # but for large datasets, we use the Woodbury formula
+    S = l*s2*np.eye(D)+np.matmul(Xtrain.T,Xtrain)
+    L = np.linalg.cholesky(S)
+    C = np.linalg.solve(L,Xtrain.T)
+    inv_cov = 1./s2*(np.eye(N) - np.matmul(C.T,C))    
+    logdet_cov = -D*np.log(l)+(N-D)*np.log(s2)+2.*np.sum(np.log(np.diag(L)))
+    loge = -N/2.*np.log(2.*np.pi)-0.5*logdet_cov-0.5*np.dot(ytrain,np.matmul(inv_cov,ytrain))
     print("log evidence = {}".format(loge))
-    
     # Joint probabilities.
     def logprob(w, s2, l, X, y, batch_size, t):
         
@@ -88,7 +95,7 @@ if __name__ == '__main__':
 
     # Build variational objective.
     objective, gradient, unpack_params = \
-        black_box_variational_inference(logprob, D, s2, l, Xtrain, ytrain, num_samples=1, batch_size=10)
+        black_box_variational_inference(logprob, D, s2, l, Xtrain, ytrain, num_samples=1, batch_size=20)
     
     # Set up figure.
     fig = plt.figure(figsize=(16,8), facecolor='white')

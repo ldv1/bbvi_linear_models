@@ -51,7 +51,7 @@ if __name__ == '__main__':
     D = 2
     assert D > 1
     # Number of observations.
-    N = 5000
+    N = 50
     # True slope and intercept.
     a = -1
     b = 0.3

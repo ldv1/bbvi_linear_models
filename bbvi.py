@@ -10,7 +10,7 @@ from autograd.misc.optimizers import adam
 
 from scipy.stats import multivariate_normal
 
-def black_box_variational_inference(logprob, D, s2, l, X, y, num_samples):
+def black_box_variational_inference(logprob, D, s2, l, X, y, num_samples, batch_size):
     """Implements http://arxiv.org/abs/1401.0118, and uses the
     local reparameterization trick from http://arxiv.org/abs/1506.02557"""
 
@@ -29,7 +29,7 @@ def black_box_variational_inference(logprob, D, s2, l, X, y, num_samples):
         samples = rs.randn(num_samples, D) * np.exp(log_std) + mean
         datafit = 0.
         for sample in samples:
-            datafit += logprob(sample, s2, l, X, y, t)
+            datafit += logprob(sample, s2, l, X, y, batch_size, t)
         datafit /= num_samples
         regularizer = gaussian_entropy(log_std)
         lower_bound = regularizer + datafit
@@ -49,42 +49,46 @@ if __name__ == '__main__':
     
     # Dimension of the parameter vector.
     D = 2
+    assert D > 1
     # Number of observations.
-    N = 20
+    N = 200
     # True slope and intercept.
     a = -1
     b = 0.3
     # Observation noise.
     s2 = 1e-1
     # Parameter of the Gaussian prior.
-    l = 1e-6
+    l = 1e-2
     # Noisy observations
-    X = np.random.uniform(low=-1.0, high=1.0, size=(N,1))
-    X = np.c_[ np.ones(N), X ]
-    y = f( [a,b], X) + np.sqrt(s2)*np.random.randn(X.shape[0])
+    Xtrain = np.c_[ np.ones(N), np.random.uniform(low=-1.0, high=1.0, size=(N,D-1)) ]
+    ytrain = f( [a,b], Xtrain) + np.sqrt(s2)*np.random.randn(Xtrain.shape[0])
     # exact log evidence
-    loge = multivariate_normal.logpdf(y.ravel(), cov=s2*np.eye(N)+1./l*np.matmul(X,X.T))
+    loge = multivariate_normal.logpdf(ytrain.ravel(), cov=s2*np.eye(N)+1./l*np.matmul(Xtrain,Xtrain.T))
     print("log evidence = {}".format(loge))
     
     # Joint probabilities.
-    def logprob(w, s2, l, X, y, t):
+    def logprob(w, s2, l, X, y, batch_size, t):
         
         N = X.shape[0]
         D = w.shape[0]
+        b = float(batch_size)
+        indices = np.random.choice(N, batch_size, replace = False)
+        Xbatch = X[indices]
+        ybatch = y[indices]
         
         def logprior():
             # Prior variance is scaled-down by l.
            return -D/2.*np.log(2*np.pi/l)-D*l/2.*np.sum(np.square(w))
             
         def loglik():
-            y_mean = f(w, X)
-            return -N/2.*np.log(2*np.pi*s2)-1./(2.*s2)*np.sum( np.square(y-y_mean) )
+            y_mean = f(w, Xbatch)
+            return -b/2.*np.log(2*np.pi*s2)-1./(2.*s2)*np.sum( np.square(ybatch-y_mean) )
         
-        return loglik() + logprior()
+        return N/b*loglik() + logprior()
 
     # Build variational objective.
     objective, gradient, unpack_params = \
-        black_box_variational_inference(logprob, D, s2, l, X, y, num_samples=1)
+        black_box_variational_inference(logprob, D, s2, l, Xtrain, ytrain, num_samples=1, batch_size=10)
     
     # Set up figure.
     fig = plt.figure(figsize=(16,8), facecolor='white')
@@ -119,7 +123,7 @@ if __name__ == '__main__':
         density_ax.set_xlabel("Intercept")
         density_ax.set_ylabel("Slope")
         curve_ax.cla()
-        curve_ax.scatter(X[:,1], y, s = 30, color = "black")
+        curve_ax.scatter(Xtrain[:,1], ytrain, s = 30, color = "black")
         X_test = np.array([-3, 3])
         curve_ax.plot(X_test, a+b*X_test, color = "black")
         curve_ax.plot(X_test, mean[0]+mean[1]*X_test, color = "red")
